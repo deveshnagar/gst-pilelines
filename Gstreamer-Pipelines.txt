@@ -1,0 +1,48 @@
+Gstreamer
+---------
+https://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/part-building.html
+
+
+General command to play anything either playing audio or video
+--------------------------------------------------------------
+gst-launch-1.0 filesrc location=LOCATION ! decodebin ! SINK
+		- Search for SINK using gst-inspect-1.0 command.
+		- For Audio, SINK may be "alsasink", "autoaudiosink", "pulsesink" etc.
+		- For Display, SINK may be "ximagesink", "autovideosink", "v4l2sink" etc.
+		- If you want to write the o/p data to a file, use "filesink".
+		- LOCATION is location of media file on system.
+		
+
+General command to play video and audio simultaneously
+------------------------------------------------------
+gst-launch-1 filesrc location=LOCATION ! DEMUX name=MyDemux MyDemux.video_0 ! queue ! decodebin ! autovideosink MyDemux.audio_0 ! queue ! decodebin ! audioconvert ! autoaudiosink
+		- Search for DEMUX using gst-inspect-1.0 command. Demux is demultiplexer have single input line and multiple output.
+		- Here it is used to saperate the out video and audio data from single media file.
+
+
+
+EXAMPLE TO PLAY MP3 FILE
+------------------------
+gst-launch-1.0 filesrc location=/media/pd/Thikka-SenSongsMp3.Com.mp3 ! decodebin ! alsasink
+gst-launch-1.0 filesrc location=/media/pd/test.mp4 ! decodebin ! autovideosink
+
+
+EXAMPLE TO PLAY MP4 FILE
+------------------------
+gst-launch-1.0 filesrc location=/media/pd/test.mp4 ! qtdemux name=mdemux mdemux.video_0 ! queue ! decodebin ! autovideosink 
+gst-launch-1.0 filesrc location=/media/pd/Mirzya.mp4 ! qtdemux name=mdemux mdemux.audio_0 ! queue max-size-buffers=0 max-size-time=0 ! decodebin ! audioconvert ! autoaudiosink
+gst-launch-1.0 filesrc location=/media/pd/Mirzya.mp4 ! qtdemux name=mdemux mdemux.audio_0 ! queue ! decodebin ! audioconvert ! autoaudiosink
+gst-launch-1.0 filesrc location=/media/pd/Mirzya.mp4 ! qtdemux name=mdemux mdemux.video_0 ! queue ! decodebin ! autovideosink mdemux.audio_0 ! queue ! decodebin ! audioconvert ! autoaudiosink
+gst-launch-1.0 filesrc location=/media/pd/Mirzya.mp4 ! qtdemux name=mdemux mdemux.video_0 ! queue max-size-buffers=0 max-size-time=0 ! decodebin ! autovideosink axis-left=0 axis-top=0 disp-width=720 disp-height=480 mdemux.audio_0 ! queue max-size-buffers=0 max-size-time=0 ! decodebin ! audioconvert ! autoaudiosink
+
+
+EXAMPLE TO PLAY MPG FILE
+------------------------
+gst-launch-1.0 filesrc location=/media/pd/lion.mpg ! decodebin ! autovideosink
+gst-launch-1.0 filesrc location=/media/pd/lion.mpg ! decodebin name=decoder decoder. ! videoconvert ! ximagesink
+gst-launch-1.0 filesrc location=/media/pd/lion.mpg ! decodebin name=decoder decoder. ! videoconvert ! autovideosink
+
+EXAMPLE TO PLAY JPG FILE
+------------------------
+gst-launch-1.0 filesrc location=/media/pd/logo-ubuntu.jpg ! jpegdec ! decodebin ! imagefreeze ! autovideosink
+
